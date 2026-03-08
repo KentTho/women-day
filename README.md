@@ -120,4 +120,3 @@ Change hex codes to adjust the color scheme.
 ---
 
 Made with ❤️ for International Women's Day 🌸
-# women-day
