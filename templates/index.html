@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Happy 8/3 💐</title>
+
+  <!-- Google Fonts: elegant display + body pairing -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Nunito:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS VARIABLES – ROMANTIC PALETTE
+    ============================================================ */
+    :root {
+      --rose:       #f472b6;
+      --deep-rose:  #be185d;
+      --blush:      #fce7f3;
+      --lilac:      #c4b5fd;
+      --deep-lilac: #7c3aed;
+      --cream:      #fff1f5;
+      --gold:       #f9a8d4;
+      --text-dark:  #4a1942;
+      --text-mid:   #831843;
+      --card-bg:    rgba(255,255,255,0.92);
+
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 25%, #e1bee7 60%, #ce93d8 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ============================================================
+       CANVAS – PETAL / SPARKLE LAYER (sits behind everything)
+    ============================================================ */
+    #petals-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============================================================
+       LANDING SCREEN
+    ============================================================ */
+    #landing {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+      transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+    }
+
+    #landing.hidden {
+      opacity: 0;
+      transform: scale(1.05);
+      pointer-events: none;
+    }
+
+    /* Floating title badge */
+    .landing-badge {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 2rem;
+      padding: 0.4rem 1.4rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      animation: fadeSlideDown 1s var(--ease-bounce) 0.3s both;
+    }
+
+    /* Big ornamental heading */
+    .landing-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 11vw, 5.5rem);
+      font-style: italic;
+      line-height: 1.05;
+      text-align: center;
+      color: var(--deep-rose);
+      text-shadow: 0 2px 30px rgba(190,24,93,0.18);
+      animation: fadeSlideUp 1.1s var(--ease-bounce) 0.5s both;
+    }
+
+    .landing-title span {
+      display: block;
+      background: linear-gradient(135deg, var(--deep-rose), var(--deep-lilac));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Decorative divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      animation: fadeIn 1s ease 1s both;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose));
+    }
+    .divider::after { background: linear-gradient(90deg, var(--rose), transparent); }
+    .divider-heart { font-size: 1rem; animation: heartbeat 1.4s ease-in-out infinite; }
+
+    /* Subtitle */
+    .landing-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      font-style: italic;
+      color: var(--text-mid);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 300px;
+      animation: fadeSlideUp 1s var(--ease-smooth) 0.8s both;
+    }
+
+    /* Open card button */
+    .open-btn {
+      position: relative;
+      overflow: hidden;
+      border: none;
+      cursor: pointer;
+      padding: 1rem 2.4rem;
+      border-radius: 999px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: linear-gradient(135deg, var(--rose) 0%, var(--deep-rose) 50%, var(--deep-lilac) 100%);
+      box-shadow: 0 8px 32px rgba(190,24,93,0.35), 0 2px 8px rgba(190,24,93,0.2);
+      animation: fadeSlideUp 1s var(--ease-bounce) 1.1s both;
+      transition: transform 0.2s var(--ease-bounce), box-shadow 0.3s;
+    }
+
+    .open-btn:active { transform: scale(0.95); }
+    .open-btn:hover  { box-shadow: 0 12px 40px rgba(190,24,93,0.45); }
+
+    /* Shimmer sweep on button */
+    .open-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -80%;
+      width: 60%; height: 200%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-20deg);
+      animation: shimmer 2.8s ease-in-out 2s infinite;
+    }
+
+    /* ============================================================
+       GLOWING HEART (landing)
+    ============================================================ */
+    .glow-heart-wrap {
+      animation: fadeIn 1s ease 0.9s both;
+    }
+    .glow-heart {
+      font-size: 3.5rem;
+      display: block;
+      filter: drop-shadow(0 0 18px rgba(244,114,182,0.7));
+      animation: heartbeat 1.5s ease-in-out infinite, floatY 3s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       CARD OVERLAY
+    ============================================================ */
+    #card-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      /* hidden by default */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s var(--ease-smooth);
+      background: rgba(252,228,236,0.35);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    #card-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ============================================================
+       THE CARD
+    ============================================================ */
+    .card {
+      background: var(--card-bg);
+      border-radius: 2rem;
+      padding: 2.5rem 2rem 2.2rem;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow:
+        0 4px 6px rgba(190,24,93,0.07),
+        0 20px 60px rgba(190,24,93,0.18),
+        0 0 0 1px rgba(255,255,255,0.7) inset;
+
+      /* card flip-in animation trigger class */
+      transform: scale(0.6) rotateY(25deg);
+      opacity: 0;
+      transition:
+        transform 0.9s var(--ease-bounce),
+        opacity 0.7s var(--ease-smooth);
+    }
+
+    .card.open {
+      transform: scale(1) rotateY(0deg);
+      opacity: 1;
+    }
+
+    /* Top decorative ribbon */
+    .card-ribbon {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--lilac), var(--rose), var(--lilac));
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* Emoji flower crown row */
+    .card-flowers {
+      font-size: 1.6rem;
+      letter-spacing: 0.2rem;
+      margin-bottom: 1rem;
+      animation: floatY 3.5s ease-in-out infinite;
+    }
+
+    /* Card heading */
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 6vw, 1.9rem);
+      font-style: italic;
+      color: var(--deep-rose);
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 1px 12px rgba(190,24,93,0.12);
+    }
+
+    .card-date {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lilac);
+      margin-bottom: 1.6rem;
+      font-weight: 300;
+    }
+
+    /* Ornamental divider */
+    .card-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 auto 1.5rem;
+      width: fit-content;
+    }
+    .card-rule::before,
+    .card-rule::after {
+      content: '';
+      display: block;
+      width: 44px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose));
+    }
+    .card-rule::after { background: linear-gradient(90deg, var(--rose), transparent); }
+
+    /* Vietnamese message */
+    .card-message {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.05rem, 4.5vw, 1.2rem);
+      color: var(--text-dark);
+      line-height: 1.85;
+      font-style: italic;
+      padding: 0 0.4rem;
+    }
+
+    .card-message em {
+      font-style: normal;
+      color: var(--deep-rose);
+    }
+
+    /* Heart pulse at bottom of card */
+    .card-heart {
+      font-size: 2.2rem;
+      display: inline-block;
+      margin-top: 1.6rem;
+      filter: drop-shadow(0 0 10px rgba(244,114,182,0.6));
+      animation: heartbeat 1.3s ease-in-out infinite;
+    }
+
+    /* Close / back button */
+    .close-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.4rem;
+      border: 1.5px solid rgba(190,24,93,0.3);
+      background: transparent;
+      color: var(--text-mid);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .close-btn:hover { background: rgba(244,114,182,0.1); border-color: var(--rose); }
+
+    /* ============================================================
+       KEYFRAME ANIMATIONS
+    ============================================================ */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1);    }
+      14%       { transform: scale(1.15); }
+      28%       { transform: scale(1);    }
+      42%       { transform: scale(1.1);  }
+      70%       { transform: scale(1);    }
+    }
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0);    }
+      50%       { transform: translateY(-8px); }
+    }
+    @keyframes shimmer {
+      0%   { left: -80%; }
+      100% { left: 120%; }
+    }
+
+    /* ============================================================
+       SPARKLE BURST (CSS sparks emitted on button click)
+    ============================================================ */
+    .spark {
+      position: fixed;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 30;
+      animation: spark-fly 0.8s ease-out forwards;
+    }
+    @keyframes spark-fly {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    /* ============================================================
+       RESPONSIVE TWEAKS
+    ============================================================ */
+    @media (max-height: 700px) {
+      .landing-title { font-size: clamp(2.2rem, 9vw, 4rem); }
+      #landing { gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     CANVAS: falling petals & sparkles (drawn by JS)
+============================================================ -->
+<canvas id="petals-canvas"></canvas>
+
+<!-- ============================================================
+     LANDING SCREEN
+============================================================ -->
+<section id="landing" aria-label="Landing screen">
+
+  <div class="landing-badge">✦ Dành riêng cho em ✦</div>
+
+  <h1 class="landing-title">
+    <span>Happy</span>
+    Women's Day
+  </h1>
+
+  <div class="divider"><span class="divider-heart">❤️</span></div>
+
+  <p class="landing-sub">Một ngày đặc biệt,<br/>dành cho người đặc biệt nhất.</p>
+
+  <div class="glow-heart-wrap">
+    <span class="glow-heart" aria-hidden="true">🌸</span>
+  </div>
+
+  <button class="open-btn" id="openCardBtn" aria-label="Mở thiệp chúc mừng">
+    💌 &nbsp;Mở Thiệp 8/3 Của Em
+  </button>
+
+</section>
+
+<!-- ============================================================
+     CARD OVERLAY
+============================================================ -->
+<div id="card-overlay" aria-modal="true" role="dialog" aria-label="Thiệp chúc mừng">
+  <article class="card" id="greetingCard">
+    <div class="card-ribbon"></div>
+
+    <div class="card-flowers" aria-hidden="true">🌸🌺🌷</div>
+
+    <h2 class="card-title">Happy International<br/>Women's Day 🌸</h2>
+    <p class="card-date">8 · 3 · 2025</p>
+
+    <div class="card-rule"><span aria-hidden="true">✿</span></div>
+
+    <p class="card-message">
+      Chúc em một ngày <em>8/3</em> thật hạnh phúc.<br/><br/>
+      Cảm ơn em vì đã xuất hiện<br/>trong cuộc đời anh.<br/><br/>
+      Mong rằng mỗi ngày bên nhau<br/>sẽ luôn đầy <em>niềm vui</em> và <em>yêu thương</em>. ❤️
+    </p>
+
+    <div class="card-heart" aria-hidden="true">💖</div>
+
+    <br/>
+    <button class="close-btn" id="closeCardBtn" aria-label="Quay lại">
+      ← Quay lại
+    </button>
+  </article>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   1.  CANVAS ANIMATION – falling petals + sparkles
+============================================================ */
+(function () {
+  const canvas = document.getElementById('petals-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  // Resize canvas to full viewport
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* --- Petal shapes as emoji rendered to off-screen canvas --- */
+  const EMOJIS   = ['🌸', '🌺', '🌷', '🌹', '✿', '❀'];
+  const NUM_PETS = 28;  // number of floating petals
+
+  /* Create a petal particle */
+  function makePetal() {
+    return {
+      x:     Math.random() * canvas.width,
+      y:     Math.random() * canvas.height - canvas.height,
+      size:  Math.random() * 18 + 10,       // 10–28 px
+      speed: Math.random() * 0.9 + 0.4,     // fall speed
+      drift: (Math.random() - 0.5) * 0.7,   // horizontal sway
+      spin:  (Math.random() - 0.5) * 0.04,  // rotation speed
+      angle: Math.random() * Math.PI * 2,
+      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      alpha: Math.random() * 0.5 + 0.4,
+    };
+  }
+
+  const petals = Array.from({ length: NUM_PETS }, makePetal);
+
+  /* --- Sparkle particles (small glowing dots) --- */
+  const NUM_SPARKS = 40;
+
+  function makeSpark() {
+    return {
+      x:     Math.random() * canvas.width,
+      y:     Math.random() * canvas.height,
+      r:     Math.random() * 2.2 + 0.5,
+      alpha: Math.random(),
+      speed: Math.random() * 0.006 + 0.003,  // alpha oscillation speed
+      phase: Math.random() * Math.PI * 2,
+      color: ['#f472b6','#c4b5fd','#f9a8d4','#fbcfe8','#ffffff']
+               [Math.floor(Math.random() * 5)],
+    };
+  }
+
+  const sparks = Array.from({ length: NUM_SPARKS }, makeSpark);
+
+  /* --- Animation loop --- */
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    t++;
+
+    // Draw sparkles
+    sparks.forEach(s => {
+      s.alpha = 0.4 + 0.6 * Math.abs(Math.sin(t * s.speed + s.phase));
+      ctx.save();
+      ctx.globalAlpha = s.alpha;
+      ctx.fillStyle   = s.color;
+      ctx.shadowColor = s.color;
+      ctx.shadowBlur  = 8;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Draw petals
+    petals.forEach(p => {
+      // Move
+      p.y     += p.speed;
+      p.x     += p.drift + Math.sin(t * 0.012 + p.angle) * 0.4;
+      p.angle += p.spin;
+
+      // Reset when off screen
+      if (p.y > canvas.height + 40) {
+        p.y = -40;
+        p.x = Math.random() * canvas.width;
+      }
+
+      // Draw emoji petal
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.font        = `${p.size}px serif`;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillText(p.emoji, -p.size / 2, p.size / 2);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   2.  CARD OPEN / CLOSE LOGIC
+============================================================ */
+const landing     = document.getElementById('landing');
+const overlay     = document.getElementById('card-overlay');
+const card        = document.getElementById('greetingCard');
+const openBtn     = document.getElementById('openCardBtn');
+const closeBtn    = document.getElementById('closeCardBtn');
+
+/** Fire CSS spark burst around the button click point */
+function burstSparks(originX, originY) {
+  const COLORS = ['#f472b6','#c4b5fd','#fbbf24','#fb7185','#fff'];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'spark';
+    const angle = (i / 18) * Math.PI * 2;
+    const dist  = 50 + Math.random() * 60;
+    el.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+    el.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+    el.style.left            = `${originX}px`;
+    el.style.top             = `${originY}px`;
+    el.style.background      = COLORS[Math.floor(Math.random() * COLORS.length)];
+    el.style.animationDelay  = `${Math.random() * 0.15}s`;
+    document.body.appendChild(el);
+    // Remove after animation
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+openBtn.addEventListener('click', function (e) {
+  // Spark burst from button centre
+  const rect = openBtn.getBoundingClientRect();
+  burstSparks(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+  // Short delay so sparks are visible before transition
+  setTimeout(() => {
+    landing.classList.add('hidden');
+    overlay.classList.add('visible');
+    // Trigger card flip-in after overlay fades in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => card.classList.add('open'));
+    });
+  }, 180);
+});
+
+closeBtn.addEventListener('click', function () {
+  card.classList.remove('open');
+  setTimeout(() => {
+    overlay.classList.remove('visible');
+    landing.classList.remove('hidden');
+  }, 600);
+});
+
+// Also allow clicking outside card to close
+overlay.addEventListener('click', function (e) {
+  if (e.target === overlay) closeBtn.click();
+});
+</script>
+
+</body>
+</html>
